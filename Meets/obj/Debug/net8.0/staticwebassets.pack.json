@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Program Files (x86)\\Microsoft Visual Studio\\repos\\Meets\\Meets\\Meets\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\Meets.bundle.scp.css",
+      "PackagePath": "staticwebassets\\Meets.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\Program Files (x86)\\Microsoft Visual Studio\\repos\\Meets\\Meets\\Meets\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "D:\\Program Files (x86)\\Microsoft Visual Studio\\repos\\Meets\\Meets\\Meets\\wwwroot\\images\\goscie-gigapixel.png",
+      "PackagePath": "staticwebassets\\images\\goscie-gigapixel.png"
+    },
+    {
+      "Id": "D:\\Program Files (x86)\\Microsoft Visual Studio\\repos\\Meets\\Meets\\Meets\\wwwroot\\images\\logo_l.png",
+      "PackagePath": "staticwebassets\\images\\logo_l.png"
+    },
+    {
+      "Id": "D:\\Program Files (x86)\\Microsoft Visual Studio\\repos\\Meets\\Meets\\Meets\\wwwroot\\images\\logo_s.png",
+      "PackagePath": "staticwebassets\\images\\logo_s.png"
+    },
+    {
+      "Id": "D:\\Program Files (x86)\\Microsoft Visual Studio\\repos\\Meets\\Meets\\Meets\\wwwroot\\images\\ustawienia 1.png",
+      "PackagePath": "staticwebassets\\images\\ustawienia 1.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Meets.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Meets.props",
+      "PackagePath": "build\\Meets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Meets.props",
+      "PackagePath": "buildMultiTargeting\\Meets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Meets.props",
+      "PackagePath": "buildTransitive\\Meets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

@@ -1,0 +1,40 @@
+.header[b-ni5o6035p1] {
+    width: 100%;
+}
+.username[b-ni5o6035p1] {
+    left: 1019px;
+    color: #E7EBDA;
+    float: right;
+    font-family: Verdana;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 42px;
+    text-align: center;
+    margin-top: 15px;
+    margin-right: 10px;
+}
+.logout[b-ni5o6035p1] {
+    font-family: Verdana;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 42px;
+    text-align: center;
+    color: #E7EBDA;
+    float: right;
+    margin-top: 15px;
+}
+.logout:hover[b-ni5o6035p1]{
+    cursor:pointer;
+}
+.settings[b-ni5o6035p1] {
+    float: right;
+    margin-top: 15px;
+    margin-right: 10px;
+}
+.logo[b-ni5o6035p1]{
+    float: left;
+    margin-right: auto;
+    margin-left: 0;
+    cursor: pointer;
+}

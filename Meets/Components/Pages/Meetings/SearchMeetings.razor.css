@@ -1,0 +1,42 @@
+﻿.container {
+    color: #1E5945;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0em;
+    text-align: left;
+}
+.header {
+    margin-top: 10px;
+    font-family: Tahoma;
+    font-size: 38px;
+    font-weight: 400;
+    text-align: left;
+}
+.meetings {
+    
+}
+.meeting{
+    position: relative;
+    height: 100px;
+}
+.dark {
+    background-color: #1E5945;
+    color: #E7EBDA;
+}
+.title{
+    float: left;
+}
+.data_location {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.size{
+    float: right;
+    margin-right: 40px;
+}
+.jstatus {
+    float: right;
+    cursor: pointer;
+}

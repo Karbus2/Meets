@@ -1,0 +1,89 @@
+﻿@page "/People/{searchstring?}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<People> Logger
+@inject NavigationManager navigationManager
+@inject ApplicationUserService applicationUserService
+
+<h3>People</h3>
+
+<button @onclick="@(() => navigationManager.NavigateTo("/"))" type="button">Wróc do strony głównej</button>
+
+@if (users is not null)
+{
+    foreach (ApplicationUser user in users)
+    {
+        <p>@user.UserName</p>
+        if (user.FriendsAccepted.Any(fa => (
+                fa.Id == authUser.Id && 
+                fa.Friendships.SingleOrDefault(fs => fs.RequesterId == authUser.Id).Accepted == true)) || 
+                user.FriendsRequested.Any(fa => fa.Id == authUser.Id && fa.Friendships.SingleOrDefault(fs => fs.AddresseeId == authUser.Id).Accepted == true))
+        {
+            <button type="button" @onclick="() => DeleteFriend(user)">Usuń ze znajomych</button>
+        }
+        else if (user.FriendsAccepted.Any(fa => (
+                    fa.Id == authUser.Id &&
+                    fa.Friendships.SingleOrDefault(fs => fs.RequesterId == authUser.Id).Accepted == false)) ||
+                    user.FriendsRequested.Any(fa => fa.Id == authUser.Id && fa.Friendships.SingleOrDefault(fs => fs.AddresseeId == authUser.Id).Accepted == false))
+        {
+            <button type="button" @onclick="() => AcceptFriend(user)">Zaakceptuj zaproszenie</button>
+        }
+        else
+        {
+            <button type="button" @onclick="() => InviteFriend(user)">Zaproś do przyjaciół</button>
+        }
+    }
+}
+else
+{
+    <p style="color:darkred;background-color:darkgray">Brak użytkowników</p>
+}
+
+@code {
+    [Parameter]
+    public string? SearchString { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private ApplicationUser? authUser { get; set; }
+
+    private List<ApplicationUser>? users;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            string? userName = authState?.User?.Identity?.Name;
+            authUser = await applicationUserService.GetUserAsync(au => au.UserName == userName);
+            if (SearchString is not null)
+            {
+                SearchString = SearchString.ToUpper();
+                users = await applicationUserService.GetUserListAsync(au => (
+                    au.UserName.ToUpper().Contains(SearchString)
+            ));
+            }
+            else
+            {
+                users = await applicationUserService.GetUserListAsync();
+            }
+        }
+    }
+    public async Task InviteFriend(ApplicationUser user)
+    {
+        await applicationUserService.InviteFriendAsync(authUser, user);
+    }
+    public async Task AcceptFriend(ApplicationUser user)
+    {
+        await applicationUserService.AcceptFriendAsync(user, authUser);
+    }
+    public async Task DeleteFriend(ApplicationUser user)
+    {
+        await applicationUserService.DeleteFriendAsync(authUser, user);
+    }
+}

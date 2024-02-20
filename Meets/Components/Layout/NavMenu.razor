@@ -1,0 +1,16 @@
+﻿@rendermode InteractiveServer
+
+@inject NavigationManager navigationManager
+
+<div class="navMenu">
+    <div @onclick="@(() => navigationManager.NavigateTo("/Meetings/Create"))" class="navButton">    
+        Stwórz spotkanie
+    </div>
+    <div @onclick="@(() => navigationManager.NavigateTo("/Meetings/Edit"))" class="navButton light">
+        Edytuj spotkanie
+    </div>
+    <div @onclick="@(() => navigationManager.NavigateTo("/Meetings/History"))" class="navButton">
+        Historia spotkań
+    </div>
+</div>
+

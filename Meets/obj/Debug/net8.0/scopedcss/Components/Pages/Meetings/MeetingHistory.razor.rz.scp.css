@@ -1,0 +1,49 @@
+.container[b-65x5l43yw8] {
+    color: #1E5945;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0em;
+    text-align: left;
+}
+
+.header[b-65x5l43yw8] {
+    margin-top: 10px;
+    font-family: Tahoma;
+    font-size: 38px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.history_meetings[b-65x5l43yw8] {
+}
+
+.meeting[b-65x5l43yw8] {
+    position: relative;
+    height: 100px;
+}
+
+.dark[b-65x5l43yw8] {
+    background-color: #1E5945;
+    color: #E7EBDA;
+}
+
+.title[b-65x5l43yw8] {
+    float: left;
+}
+
+.data_location[b-65x5l43yw8] {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.size[b-65x5l43yw8] {
+    float: right;
+    margin-right: 40px;
+}
+
+.jstatus[b-65x5l43yw8] {
+    float: right;
+    cursor: pointer;
+}

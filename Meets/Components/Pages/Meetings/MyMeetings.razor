@@ -1,0 +1,38 @@
+﻿@page "/Meetings/Edit"
+@page "/Meetings/My"
+
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+@using Meets.Components.Pages.Meetings.Shared
+
+@attribute [Authorize]
+
+@inject NavigationManager navigationManager
+@inject ApplicationUserService applicationUserService
+@inject MeetingService meetingService
+
+<PageTitle>Moje spotkania</PageTitle>
+
+<SearchResult SearchString="@SearchString" OwnedOnly="@true"/>
+
+@code {
+    [Parameter]
+    public string? SearchString { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private ApplicationUser AuthUser { get; set; }
+    private List<Meeting>? meetings;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            string? userName = authState?.User?.Identity?.Name;
+            AuthUser = applicationUserService.GetWholeUser(au => au.UserName == userName);
+        }
+    }
+}

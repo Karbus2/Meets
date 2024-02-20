@@ -1,0 +1,152 @@
+﻿@using Meets.Data.Services
+@using Meets.Data.Models
+
+@inject MeetingService meetingService
+@inject ApplicationUserService applicationUserService
+@inject NavigationManager navigationManager
+
+<EditForm EditContext="editContext" OnValidSubmit="@Submit" FormName="CreateMeetingForm">
+    <ValidationMessage For="() => MeetingModel!.Title" />
+    <label>
+        Tytuł
+        <InputText @bind-Value="MeetingModel!.Title" />
+    </label>
+    <br />
+    <ValidationMessage For="() => MeetingModel.StartDate" />
+    <label>
+        Początek
+        <InputDate Type="InputDateType.DateTimeLocal" @bind-Value:format="dd/MM/yyyy hh:mm:ss" @bind-Value="MeetingModel.StartDate" />
+    </label>
+    <ValidationMessage For="() => MeetingModel.EndDate" />
+    <label>
+        Koniec
+        <InputDate Type="InputDateType.DateTimeLocal" @bind-Value:format="dd/MM/yyyy hh:mm:ss" @bind-Value="MeetingModel.EndDate" />
+    </label>
+    <br />
+    <ValidationMessage For="() => MeetingModel.Location" />
+    <label>
+        Lokalizacja
+        <InputText @bind-Value="MeetingModel.Location" />
+    </label>
+    <label>
+        Typ spotkania:
+        <InputSelect @bind-Value="MeetingModel.PrivacyPolicy">
+            <option value="@MeetingPrivacyPolicy.Private">Prywatne</option>
+            <option value="@MeetingPrivacyPolicy.FriendsOnly">Tylko dla przyjaciół</option>
+            <option value="@MeetingPrivacyPolicy.Public">Publiczne</option>
+        </InputSelect>
+    </label>
+    <label>
+        Maksymalna ilość uczestników
+        <InputNumber min="2" @bind-Value="MeetingModel.MaxSize" />
+    </label>
+    <br />
+    <label>
+        Opis
+        <InputTextArea @bind-Value="MeetingModel.Description" />
+    </label>
+    <br />
+    @if (!IsUpdate)
+    {
+        <button type="submit">Utwórz</button>
+    }
+    else
+    {
+        <button type="submit">Aktualizuj</button>
+        <button type="button" @onclick="DeleteMeeting">Odwołaj spotkanie</button>
+    }
+</EditForm>
+
+@code {
+    private bool IsUpdate { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private EditContext? editContext;
+
+    [Parameter]
+    public Meeting? MeetingModel { get; set; }
+
+    private ValidationMessageStore? messageStore;
+
+    protected override void OnParametersSet()
+    {
+        if (MeetingModel is not null)
+        {
+            IsUpdate = true;
+        }
+        else
+        {
+            MeetingModel ??= new();
+            IsUpdate = false;
+        }
+        editContext = new(MeetingModel);
+        editContext.OnValidationRequested += HandleValidationRequested;
+        messageStore = new(editContext);
+
+    }
+
+    private void HandleValidationRequested(object? sender, ValidationRequestedEventArgs args)
+    {
+        messageStore?.Clear();
+        if (MeetingModel is null)
+        {
+            messageStore?.Add(() => MeetingModel!, "Formularz jest pusty");
+        }
+        if (string.IsNullOrWhiteSpace(MeetingModel!.Title))
+        {
+            messageStore?.Add(() => MeetingModel.Title, "Musi być tytuł");
+        }
+        if (string.IsNullOrWhiteSpace(MeetingModel!.Location))
+        {
+            messageStore?.Add(() => MeetingModel.Location, "Musi być lokalizacja");
+        }
+        if (MeetingModel!.StartDate < DateTime.Now)
+        {
+            messageStore?.Add(() => MeetingModel.StartDate, "Data nie może być wsteczna");
+        }
+        if (MeetingModel!.EndDate <= MeetingModel.StartDate)
+        {
+            messageStore?.Add(() => MeetingModel.EndDate, "Spotkanie nie może się kończyć przed rozpoczęciem");
+        }
+    }
+
+    private async Task Submit()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            string? userName = authState?.User?.Identity?.Name;
+            if (userName is null)
+            {
+                throw new NullReferenceException("Nie udało się pobrać tożsamości usera");
+            }
+            ApplicationUser? authUser = await applicationUserService.GetUserAsync(au => au.Email == userName);
+            if (authUser is null)
+            {
+                throw new NullReferenceException("Nie udało się pobrać usera");
+            }
+            if (!IsUpdate)
+            {
+                await meetingService.CreateMeetingAsync(MeetingModel!, authUser);
+                MeetingModel = new();
+            }
+            else
+            {
+                await meetingService.UpdateMeetingAsync(MeetingModel!);
+            }
+        }
+    }
+    private async Task DeleteMeeting()
+    {
+        await meetingService.DeleteMeetingAsync(MeetingModel);
+        navigationManager.NavigateTo("/Meetings/Edit");
+    }
+    public void Dispose()
+    {
+        if (editContext is not null)
+        {
+            editContext.OnValidationRequested -= HandleValidationRequested;
+        }
+    }
+}

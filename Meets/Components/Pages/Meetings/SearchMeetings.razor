@@ -1,0 +1,24 @@
+﻿@page "/Meetings/Search/{searchstring?}"
+@page "/Meetings"
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+@using Meets.Components.Pages.Meetings.Shared
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<SearchMeetings> Logger
+@inject NavigationManager navigationManager
+@inject MeetingService meetingService
+@inject ApplicationUserService applicationUserService
+
+<PageTitle>Szukaj spotkań</PageTitle>
+
+<SearchResult SearchString="@SearchString"/>
+
+@code {
+    [Parameter]
+    public string? SearchString { get; set; }
+}

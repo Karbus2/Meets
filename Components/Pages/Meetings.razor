@@ -1,0 +1,55 @@
+﻿@page "/Meetings/{searchstring?}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<Meetings> Logger
+@inject NavigationManager navigationManager
+@inject MeetingService meetingService
+
+<h3>Meetings</h3>
+
+<button @onclick="@(() => navigationManager.NavigateTo("/"))" type="button">Wróc do strony głównej</button>
+
+@if(meetings is not null)
+{
+    foreach(Meeting meeting in meetings)
+    {
+        <p>@meeting.Title</p>
+    }
+}
+else
+{
+    <p style="color:darkred;background-color:darkgray">Brak spotkań</p>
+}
+
+@code {
+    [Parameter]
+    public string? SearchString { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private List<Meeting>? meetings;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            string? userName = authState?.User?.Identity?.Name;
+            if (SearchString is not null)
+            {
+                SearchString = SearchString.ToUpper();
+                meetings = await meetingService.GetMeetingsListAsync(m => (m.Title.ToUpper().Contains(SearchString) && ((m.StartDate <= DateTime.Now || m.EndDate > DateTime.Now) && (m.PrivacyPolicy != MeetingPrivacyPolicy.Private || m.ApplicationUsers.Any(au => au.UserName == userName)))));
+            }
+            else
+            {
+                meetings = await meetingService.GetMeetingsListAsync(m => ((m.StartDate <= DateTime.Now || m.EndDate > DateTime.Now) && (m.PrivacyPolicy != MeetingPrivacyPolicy.Private || m.ApplicationUsers.Any(au => au.UserName == userName))));
+            }
+        }
+    }
+}

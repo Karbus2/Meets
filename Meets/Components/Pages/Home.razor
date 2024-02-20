@@ -1,0 +1,19 @@
+﻿@page "/"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<Home> Logger
+@inject NavigationManager navigationManager
+
+<PageTitle>Strona główna</PageTitle>
+
+<div class="container">
+    <div class="logobox">
+        <img src="images/logo_l.png"/>
+        <br/>
+        <div class="signature">Spotykaj i poznawaj!</div>
+    </div>
+</div>

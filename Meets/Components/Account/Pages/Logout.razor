@@ -1,0 +1,18 @@
+﻿@page "/account/logout"
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Meets.Data.Models
+
+@attribute [Authorize]
+
+@inject SignInManager<ApplicationUser> signInManager
+@inject NavigationManager navigationManager
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await signInManager.SignOutAsync();
+        navigationManager.NavigateTo("/account/login");
+    }
+}

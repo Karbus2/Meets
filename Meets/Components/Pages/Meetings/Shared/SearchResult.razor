@@ -1,0 +1,163 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+
+@rendermode InteractiveServer
+
+@inject ILogger<SearchResult> Logger
+@inject NavigationManager navigationManager
+@inject MeetingService meetingService
+@inject ApplicationUserService applicationUserService
+
+<div class="container">
+    <div class="header">Znalezione wyniki:</div>
+
+
+    @if (meetings is not null && meetings.Count > 0)
+    {
+        <div class="meetings">
+            @for (int i = 0; i < meetings.Count; i++)
+            {
+                Meeting meeting = meetings[i];
+
+                string classes = "meeting";
+                if (i % 2 == 0)
+                {
+                    classes = "meeting dark";
+                }
+
+                <div class="@classes">
+                    <div class="title">
+                        @meeting.Title
+                    </div>
+                    @if (AuthUser.ApplicationUserMeetings.Any(aum => aum.MeetingId == meeting.Id && aum.Role == MeetingRoleType.Promoter))
+                    {
+                        <div class="jstatus_mine">
+                            Twoje spotkanie
+                        </div>
+                    }
+                    else if (AuthUser.ApplicationUserMeetings.Any(aum => aum.MeetingId == meeting.Id && (aum.JoiningStatus == MeetingJoiningStatus.Accepted || (aum.JoiningStatus == MeetingJoiningStatus.ToAccept && !aum.Invited))))
+                    {
+                        <div class="jstatus" @onclick="@(() => ExitMeeting(meeting))">
+                            Zrezygnuj ze spotkania
+                        </div>
+                    }
+                    else if (AuthUser.ApplicationUserMeetings.Any(aum => aum.MeetingId == meeting.Id && aum.Invited && aum.JoiningStatus == MeetingJoiningStatus.ToAccept))
+                    {
+                        <div class="jstatus" @onclick="@(() => AcceptMeeting(meeting))">
+                            Przyjmij zaproszenie
+                        </div>
+                        <br />
+                        <div class="jstatus" style="clear:both;" @onclick="@(() => ExitMeeting(meeting))">
+                            Odrzuć zaproszenie
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="jstatus" @onclick="@(() => JoinToMeeting(meeting))">
+                            Dołącz do spotkania
+                        </div>
+                    }
+                    
+                    <div class="size">
+                        liczba osób:
+                        @meeting.ApplicationUserMeetings.Where(aum => aum.JoiningStatus == MeetingJoiningStatus.Accepted).ToList().Count
+                        @if (meeting.MaxSize is not null)
+                        {
+                            <span>/@meeting.MaxSize</span>
+                        }
+                    </div>
+                    <br />
+                    <div class="data_location">
+                        @meeting.StartDate - @meeting.EndDate, @meeting.Location
+                    </div>
+                    @if (AuthUser.ApplicationUserMeetings.Any(aum => aum.MeetingId == meeting.Id && (aum.Role == MeetingRoleType.Promoter || aum.Role == MeetingRoleType.Moderator)))
+                    {
+                        <button @onclick="() => EditMeeting(meeting.Id)">
+                            ZARZĄDZAJ
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="noFriends">Brak spotkań</p>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public string? SearchString { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private ApplicationUser AuthUser { get; set; }
+    [Parameter]
+    public bool OwnedOnly { get; set; } = false;
+    private List<Meeting>? meetings;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            AuthUser = applicationUserService.GetWholeUser(au => au.UserName == authState.User.Identity.Name);
+        }
+        if (SearchString is not null)
+        {
+            SearchString = SearchString.ToUpper();
+            meetings = await meetingService.GetWholeMeetingsListAsync(m => (m.Title.ToUpper().Contains(SearchString) && ((m.StartDate >= DateTime.Now || (m.EndDate != null && m.EndDate > DateTime.Now)) && (m.PrivacyPolicy != MeetingPrivacyPolicy.Private || m.ApplicationUsers.Any(au => au.Id == AuthUser.Id)))));
+        }
+        else
+        {
+            meetings = await meetingService.GetWholeMeetingsListAsync(m => ((m.StartDate >= DateTime.Now || (m.EndDate != null && m.EndDate > DateTime.Now)) && (m.PrivacyPolicy != MeetingPrivacyPolicy.Private || m.ApplicationUsers.Any(au => au.Id == AuthUser.Id))));
+        }
+        if (OwnedOnly)
+        {
+            meetings = meetings.Where(m => m.ApplicationUserMeetings.Any(aum => aum.ApplicationUserId == AuthUser.Id && (aum.Role == MeetingRoleType.Promoter || aum.Role == MeetingRoleType.Moderator))).ToList();
+        }
+    }
+    private void EditMeeting(string meetingId)
+    {
+        navigationManager.NavigateTo("/Meetings/Edit/" + meetingId);
+    }
+    private async Task AcceptMeeting(Meeting meeting)
+    {
+        await meetingService.AcceptMeetingAsync(meeting, AuthUser);
+        RefreshComponent();
+    }
+    private async Task JoinToMeeting(Meeting meeting)
+    {
+        await meetingService.JoinToMeetingAsync(meeting, AuthUser);
+        RefreshComponent(); 
+    }
+    private async Task ExitMeeting(Meeting meeting)
+    {
+        await meetingService.ExitMeetingAsync(meeting, AuthUser);
+        RefreshComponent();
+    }
+    private async Task RefreshComponentAsync()
+    {
+
+
+    }
+    private void RefreshComponent()
+    {
+        AuthUser = applicationUserService.GetWholeUser(au => au.Id == AuthUser.Id);
+
+        if (SearchString is not null)
+        {
+            SearchString = SearchString.ToUpper();
+            meetings = meetingService.GetWholeMeetingsList(m => (m.Title.ToUpper().Contains(SearchString) && ((m.StartDate >= DateTime.Now || (m.EndDate != null && m.EndDate > DateTime.Now)) && (m.PrivacyPolicy != MeetingPrivacyPolicy.Private || m.ApplicationUsers.Any(au => au.Id == AuthUser.Id)))));
+        }
+        else
+        {
+            meetings = meetingService.GetWholeMeetingsList(m => ((m.StartDate >= DateTime.Now || (m.EndDate != null && m.EndDate > DateTime.Now)) && (m.PrivacyPolicy != MeetingPrivacyPolicy.Private || m.ApplicationUsers.Any(au => au.Id == AuthUser.Id))));
+        }
+        if (OwnedOnly)
+        {
+            meetings = meetings.Where(m => m.ApplicationUserMeetings.Any(aum => aum.ApplicationUserId == AuthUser.Id && (aum.Role == MeetingRoleType.Promoter || aum.Role == MeetingRoleType.Moderator))).ToList();
+        }
+    }
+}

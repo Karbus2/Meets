@@ -1,0 +1,49 @@
+﻿@page "/Meetings/Edit/{MeetingId}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+@using Meets.Components.Pages.Meetings.Shared
+
+@rendermode InteractiveServer
+
+@attribute [Authorize]
+
+@inject MeetingService meetingService
+@inject ApplicationUserService applicationUserService
+@inject NavigationManager navigationManager
+
+<PageTitle>Edycja spotkania</PageTitle>
+
+<MeetingForm MeetingModel="MeetingModel"/>
+
+<FriendList Meeting="MeetingModel" AuthUser="AuthUser"/>
+
+@code {
+    [Parameter]
+    public string MeetingId { get; set; }
+
+    private Meeting? MeetingModel { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private ApplicationUser AuthUser { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        if(authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            AuthUser = applicationUserService.GetWholeUser(au => au.UserName == authState.User.Identity.Name);
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(authenticationState is not null)
+        MeetingModel = await meetingService.GetMeetingAsync(m => m.Id == MeetingId);
+        if(MeetingModel is null)
+        {
+            navigationManager.NavigateTo("/");
+        }
+
+    }
+}

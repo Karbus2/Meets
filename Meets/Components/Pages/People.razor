@@ -1,0 +1,131 @@
+﻿@page "/People/{searchstring?}"
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<People> Logger
+@inject NavigationManager navigationManager
+@inject ApplicationUserService applicationUserService
+
+<PageTitle>Szukaj znajomych</PageTitle>
+
+@if (users is not null)
+{
+    foreach (ApplicationUser user in users)
+    {
+        if (user.Id == authUser.Id)
+        {
+            continue; 
+        }
+
+        <div>
+            @user.UserName
+        </div>
+
+        if (InviteButtonValidation(authUser, user))
+        {
+            <button type="button" @onclick="() => InviteFriend(user)" name="@user.UserName">Zaproś do przyjaciół</button>
+        }
+        else if (AcceptButtonValidation(user, authUser))
+        {
+            <button type="button" @onclick="() => AcceptFriend(user)" name="@user.UserName">Zaakceptuj zaproszenie</button>
+        }
+        else if(CancelInviteButtonValidation(authUser, user))
+        {
+            <button type="button" @onclick="() => DeleteInvitation(user)" name="@user.UserName">Anuluj zaproszenie</button>
+        }
+        else
+        {
+            <button type="button" @onclick="() => DeleteFriend(user)" name="@user.UserName">Usuń ze znajomych</button>
+        }
+
+    }
+}
+else
+{
+    <p style="color:darkred;background-color:darkgray">Brak użytkowników</p>
+}
+
+@code {
+    [Parameter]
+    public string? SearchString { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+    private ApplicationUser? authUser { get; set; }
+
+    private List<ApplicationUser>? users;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            string? userName = authState?.User?.Identity?.Name;
+            authUser = applicationUserService.GetWholeUser(au => au.UserName == userName);
+            if (SearchString is not null)
+            {
+                SearchString = SearchString.ToUpper();
+                users = await applicationUserService.GetUserListAsync(
+                    au => (au.UserName.ToUpper().Contains(SearchString)));
+            }
+            else
+            {
+                users = await applicationUserService.GetUserListAsync();
+            }
+        }
+    }
+
+    private bool InviteButtonValidation(ApplicationUser requester, ApplicationUser addressee)
+    {
+        return 
+            !requester.Friends.Any(f => f.FriendId == addressee.Id) && 
+            !requester.InvitationsReceived.Any(invr => invr.RequesterId == addressee.Id) && 
+            !requester.InvitationsSent.Any(invs => invs.AddresseeId == addressee.Id);
+    }
+
+    private bool AcceptButtonValidation(ApplicationUser requester, ApplicationUser addressee)
+    {
+        return
+            addressee.InvitationsReceived.Any(invr => invr.RequesterId == requester.Id);
+    }
+    private bool CancelInviteButtonValidation(ApplicationUser requester, ApplicationUser addressee)
+    {
+        return
+            requester.InvitationsSent.Any(invs => invs.AddresseeId == addressee.Id);
+    }
+    public async Task InviteFriend(ApplicationUser user)
+    {
+        await applicationUserService.InviteFriendAsync(authUser, user);
+        RefreshComponent();
+    }
+    public async Task AcceptFriend(ApplicationUser user)
+    {
+        await applicationUserService.AcceptFriendAsync(user, authUser);
+        RefreshComponent();
+    }
+    public async Task DeleteFriend(ApplicationUser user)
+    {
+        await applicationUserService.DeleteFriendAsync(authUser.Friends.SingleOrDefault(f => f.FriendId == user.Id));
+        RefreshComponent();
+    }
+    public async Task DeleteInvitation(ApplicationUser user)
+    {
+        await applicationUserService.DeleteInvitationAsync(authUser, user);
+        RefreshComponent();
+    }
+    private void RefreshComponent()
+    {
+        if(SearchString is null)
+        {
+            navigationManager.NavigateTo($"/People", true);
+        }
+        else
+        {
+            navigationManager.NavigateTo($"/People/{SearchString}", true);
+        }  
+    }
+}

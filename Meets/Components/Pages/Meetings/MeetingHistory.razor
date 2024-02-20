@@ -1,0 +1,76 @@
+﻿@page "/Meetings/History"
+
+@using Microsoft.AspNetCore.Authorization
+@using Meets.Data.Models
+@using Meets.Data.Services
+
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+@inject ILogger<MeetingHistory> Logger
+@inject NavigationManager navigationManager
+@inject MeetingService meetingService
+@inject ApplicationUserService applicationUserService
+
+<PageTitle>Historia spotkań</PageTitle>
+
+<div class="container">
+    <div class="header">Znalezione wyniki:</div>
+
+
+    @if (meetings is not null && meetings.Count > 0)
+    {
+        <div class="history_meetings">
+            @for (int i = 0; i < meetings.Count; i++)
+            {
+                Meeting meeting = meetings[i];
+
+                string classes = "meeting";
+                if (i % 2 == 0)
+                {
+                    classes = "meeting dark";
+                }
+
+                <div class="@classes">
+                    <div class="title">
+                        @meeting.Title
+                    </div>
+                    <div class="size">
+                        liczba osób:
+                        @meeting.ApplicationUserMeetings.Where(aum => aum.JoiningStatus == MeetingJoiningStatus.Accepted).ToList().Count
+                        @if (meeting.MaxSize is not null)
+                        {
+                            <span>/@meeting.MaxSize</span>
+                        }
+                    </div>
+                    <br />
+                    <div class="data_location">
+                        @meeting.StartDate - @meeting.EndDate, @meeting.Location
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="noFriends">Brak spotkań</p>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private List<Meeting>? meetings;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            string? userName = authState?.User?.Identity?.Name;
+            string? userId = (await applicationUserService.GetUserAsync(au => au.UserName == userName)).Id;
+            meetings = await meetingService.GetWholeMeetingsListAsync(m => ((m.StartDate < DateTime.Now) && (m.ApplicationUsers.Any(au => au.UserName == userName) && (m.ApplicationUserMeetings.Any(aum => aum.ApplicationUserId == userId && aum.JoiningStatus == MeetingJoiningStatus.Accepted)))));
+        }
+    }
+}

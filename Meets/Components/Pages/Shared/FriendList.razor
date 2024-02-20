@@ -1,0 +1,59 @@
+﻿@using Meets.Data.Models
+@using Meets.Data.Services
+@using Microsoft.AspNetCore.Authorization
+
+@inject ApplicationUserService applicationUserService
+@inject MeetingService meetingService
+@inject NavigationManager navigationManager
+
+@if(Meeting is not null && Friends is not null)
+{
+    <ul>
+        @foreach(ApplicationUser friend in Friends)
+        {
+            <li>
+                @friend.UserName 
+                @if(friend.ApplicationUserMeetings.Any(aum => aum.MeetingId == Meeting.Id && aum.JoiningStatus == MeetingJoiningStatus.Accepted && aum.Role != MeetingRoleType.Promoter))
+                {
+                    <button @onclick="() => RemoveFromMeeting(friend)">Usuń ze spotkania</button>
+                }
+                else if (friend.ApplicationUserMeetings.Any(aum => aum.MeetingId == Meeting.Id && aum.JoiningStatus == MeetingJoiningStatus.ToAccept))
+                {
+                    <button @onclick="() => RemoveFromMeeting(friend)">Anuluj zaproszenie</button>
+                }
+                else
+                {
+                    <button @onclick="() => InviteToMeeting(friend)">Zaproś do spotkania</button>
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>Brak Przyjaciół</p>
+}
+
+@code {
+    private List<ApplicationUser>? Friends { get; set; }
+    [Parameter]
+    public Meeting? Meeting { get; set; }
+    [Parameter]
+    public ApplicationUser AuthUser { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Friends = applicationUserService.GetUserFriends(AuthUser);
+    }
+
+    private async Task RemoveFromMeeting(ApplicationUser participant)
+    {
+        await meetingService.RemoveFromMeetingAsync(Meeting, participant);
+        Friends = applicationUserService.GetUserFriends(AuthUser);
+    }
+    private async Task InviteToMeeting(ApplicationUser friend)
+    {
+        await meetingService.AddUserToMeetingAsync(friend, Meeting, MeetingRoleType.Participant, true);
+        Friends = applicationUserService.GetUserFriends(AuthUser);
+    }
+}

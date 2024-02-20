@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Meets.Data.Services
+@using Meets.Data.Models
+
+@rendermode InteractiveServer
+
+@inject ILogger<UserBar> Logger 
+@inject NavigationManager navigationManager
+
+<div class="header">
+    <div class="logo" @onclick="@(() => navigationManager.NavigateTo("/"))">
+        <img src="images/logo_s.png"/>
+    </div>
+    <AuthorizeView>
+        <div @onclick="SignOut" class="logout">
+            Wyloguj
+        </div>
+        <div class="settings">
+            <img src="images/ustawienia 1.png"/>
+        </div>
+        <div class="username">
+            @FirstName
+        </div>
+    </AuthorizeView>
+</div>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private string? FirstName;
+    private string? Surname;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (authenticationState is not null)
+        {
+            var authState = await authenticationState;
+            FirstName = authState?.User?.Identity?.Name;
+        }
+    }
+
+    private void SignOut()
+    {
+        navigationManager.NavigateTo("/account/logout");
+    }
+}

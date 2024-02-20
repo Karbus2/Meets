@@ -1,0 +1,50 @@
+﻿@using Meets.Data.Models
+
+@rendermode InteractiveServer
+
+@inject ILogger<SearchEngine> Logger
+@inject NavigationManager navigationManager
+
+<div class="searchbox">
+    <EditForm Model="MeetingUserSearchModel" OnValidSubmit="Submit" FormName="MeetingUserSearchForm">
+        <label>
+            <p>Szukaj</p>
+            <br/>
+            <InputText @bind-Value="MeetingUserSearchModel!.UserInput"/>
+        </label>
+        <br/>
+        <InputRadioGroup Name="SearchTypeGroup" @bind-Value="MeetingUserSearchModel!.SearchType">
+            <div class="l-left">
+                <label>
+                    <InputRadio Name="SearchTypeGroup" Value="true" />
+                    Znajomi
+                </label>
+                <br/>
+                <label>
+                    <InputRadio Name="SearchTypeGroup" Value="false"/>
+                    Spotkania
+                </label>
+            </div>
+        </InputRadioGroup>
+    </EditForm>
+</div>
+@code {
+    [SupplyParameterFromForm]
+    public MeetingUserSearch? MeetingUserSearchModel { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MeetingUserSearchModel ??= new();
+    }
+    private void Submit()
+    {
+        if (MeetingUserSearchModel!.SearchType)
+        {
+            navigationManager.NavigateTo("/People/" + MeetingUserSearchModel!.UserInput);
+        }
+        else
+        {
+            navigationManager.NavigateTo("/Meetings/Search/" + MeetingUserSearchModel!.UserInput);
+        }
+    }
+}

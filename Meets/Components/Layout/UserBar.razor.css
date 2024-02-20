@@ -1,0 +1,40 @@
+﻿.header {
+    width: 100%;
+}
+.username {
+    left: 1019px;
+    color: #E7EBDA;
+    float: right;
+    font-family: Verdana;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 42px;
+    text-align: center;
+    margin-top: 15px;
+    margin-right: 10px;
+}
+.logout {
+    font-family: Verdana;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 42px;
+    text-align: center;
+    color: #E7EBDA;
+    float: right;
+    margin-top: 15px;
+}
+.logout:hover{
+    cursor:pointer;
+}
+.settings {
+    float: right;
+    margin-top: 15px;
+    margin-right: 10px;
+}
+.logo{
+    float: left;
+    margin-right: auto;
+    margin-left: 0;
+    cursor: pointer;
+}

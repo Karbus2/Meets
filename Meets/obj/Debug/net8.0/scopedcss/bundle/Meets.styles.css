@@ -1,0 +1,367 @@
+/* _content/Meets/Components/Layout/MainLayout.razor.rz.scp.css */
+.page[b-il60z2difs] {
+    background-color: #E7EBDA;
+    
+    min-height: 1113px;
+}
+.top-row[b-il60z2difs] {
+    background-color: #1E5945;
+    justify-content: flex-end;
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+main[b-il60z2difs] {
+    flex: 1;
+    overflow: hidden;
+    font-family: Tahoma;
+}
+.sidebar[b-il60z2difs] {
+    float: left;
+    background-color: #1E5945;
+    color: #E7EBDA;
+}
+
+.top-row[b-il60z2difs]  a, .top-row[b-il60z2difs]  .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+}
+
+.top-row[b-il60z2difs]  a:hover, .top-row[b-il60z2difs]  .btn-link:hover {
+    text-decoration: underline;
+}
+
+.top-row[b-il60z2difs]  a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 640.98px) {
+    .top-row[b-il60z2difs] {
+        justify-content: space-between;
+    }
+
+    .top-row[b-il60z2difs]  a, .top-row[b-il60z2difs]  .btn-link {
+        margin-left: 0;
+    }
+}
+@media (min-width: 641px) {
+    .page[b-il60z2difs] {
+        flex-direction: row;
+    }
+
+    .sidebar[b-il60z2difs] {
+        width: 250px;
+        height: 80vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .top-row[b-il60z2difs] {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    .top-row.auth[b-il60z2difs]  a:first-child {
+        flex: 1;
+        text-align: right;
+        width: 0;
+    }
+
+    .top-row[b-il60z2difs], article[b-il60z2difs] {
+        padding-left: 2rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+
+#blazor-error-ui[b-il60z2difs] {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+#blazor-error-ui .dismiss[b-il60z2difs] {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+/* _content/Meets/Components/Layout/NavMenu.razor.rz.scp.css */
+.navMenu[b-74v3ucn41m]{
+    text-align: center;
+}
+.navButton[b-74v3ucn41m] {
+    height: 50px;
+    font-family: Tahoma;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 42px;
+    letter-spacing: 0em;
+    text-align: center;
+    cursor: pointer;
+}
+.light[b-74v3ucn41m] {
+    background-color: #E7EBDA;
+    color: #1E5945;
+    width: 94%;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* _content/Meets/Components/Layout/SearchEngine.razor.rz.scp.css */
+.searchbox[b-otaspz4nz6] {
+    font-family: Tahoma;
+    font-size: 20px;
+    text-align: center;
+    background-color: #E7EBDA;
+    color: #1E5945;
+    text-align: center;
+    width: 94%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 194px;
+}
+.l-left[b-otaspz4nz6]{
+    text-align: left;
+}
+[b-otaspz4nz6] input[name="MeetingUserSearchModel.UserInput"] {
+    background-color: #1E5945;
+    opacity: 50%;
+    border-radius: 10px;
+    height: 23px;
+    color: #E7EBDA;
+    width: 93%;
+    margin-bottom: 20px;
+}
+[b-otaspz4nz6] input[name="MeetingUserSearchModel.UserInput"]:hover {
+
+}
+[b-otaspz4nz6] input[type=radio] {
+    background-color: #1E5945;
+}
+p[b-otaspz4nz6]{
+    margin-block-start: 0;
+    margin-block-end: 0;
+    margin-top: 10px;
+    padding-top: 5px;
+}
+/* _content/Meets/Components/Layout/UserBar.razor.rz.scp.css */
+.header[b-ni5o6035p1] {
+    width: 100%;
+}
+.username[b-ni5o6035p1] {
+    left: 1019px;
+    color: #E7EBDA;
+    float: right;
+    font-family: Verdana;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 42px;
+    text-align: center;
+    margin-top: 15px;
+    margin-right: 10px;
+}
+.logout[b-ni5o6035p1] {
+    font-family: Verdana;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 42px;
+    text-align: center;
+    color: #E7EBDA;
+    float: right;
+    margin-top: 15px;
+}
+.logout:hover[b-ni5o6035p1]{
+    cursor:pointer;
+}
+.settings[b-ni5o6035p1] {
+    float: right;
+    margin-top: 15px;
+    margin-right: 10px;
+}
+.logo[b-ni5o6035p1]{
+    float: left;
+    margin-right: auto;
+    margin-left: 0;
+    cursor: pointer;
+}
+/* _content/Meets/Components/Pages/Home.razor.rz.scp.css */
+.container[b-96viewk5f7]{
+
+}
+.logobox[b-96viewk5f7] {
+    margin-top: 8%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 590px;
+    height: 277px;
+    text-align: center;
+    background-color: #1E5945;
+    color: #E7EBDA;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 70px;
+    letter-spacing: 0em;
+    text-align: center;
+    border-radius: 12px;
+}
+.signature[b-96viewk5f7]{
+    width: 100%;
+}
+img[b-96viewk5f7]{
+    margin-top: 40px;
+}
+/* _content/Meets/Components/Pages/Meetings/MeetingHistory.razor.rz.scp.css */
+.container[b-65x5l43yw8] {
+    color: #1E5945;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0em;
+    text-align: left;
+}
+
+.header[b-65x5l43yw8] {
+    margin-top: 10px;
+    font-family: Tahoma;
+    font-size: 38px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.history_meetings[b-65x5l43yw8] {
+}
+
+.meeting[b-65x5l43yw8] {
+    position: relative;
+    height: 100px;
+}
+
+.dark[b-65x5l43yw8] {
+    background-color: #1E5945;
+    color: #E7EBDA;
+}
+
+.title[b-65x5l43yw8] {
+    float: left;
+}
+
+.data_location[b-65x5l43yw8] {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.size[b-65x5l43yw8] {
+    float: right;
+    margin-right: 40px;
+}
+
+.jstatus[b-65x5l43yw8] {
+    float: right;
+    cursor: pointer;
+}
+/* _content/Meets/Components/Pages/Meetings/SearchMeetings.razor.rz.scp.css */
+.container[b-f9sa9xsovt] {
+    color: #1E5945;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0em;
+    text-align: left;
+}
+.header[b-f9sa9xsovt] {
+    margin-top: 10px;
+    font-family: Tahoma;
+    font-size: 38px;
+    font-weight: 400;
+    text-align: left;
+}
+.meetings[b-f9sa9xsovt] {
+    
+}
+.meeting[b-f9sa9xsovt]{
+    position: relative;
+    height: 100px;
+}
+.dark[b-f9sa9xsovt] {
+    background-color: #1E5945;
+    color: #E7EBDA;
+}
+.title[b-f9sa9xsovt]{
+    float: left;
+}
+.data_location[b-f9sa9xsovt] {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.size[b-f9sa9xsovt]{
+    float: right;
+    margin-right: 40px;
+}
+.jstatus[b-f9sa9xsovt] {
+    float: right;
+    cursor: pointer;
+}
+/* _content/Meets/Components/Pages/Meetings/Shared/SearchResult.razor.rz.scp.css */
+.container[b-sjuchwxt5l] {
+    color: #1E5945;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 0em;
+    text-align: left;
+}
+
+.header[b-sjuchwxt5l] {
+    margin-top: 10px;
+    font-family: Tahoma;
+    font-size: 38px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.meetings[b-sjuchwxt5l] {
+}
+
+.meeting[b-sjuchwxt5l] {
+    position: relative;
+    height: 100px;
+}
+
+.dark[b-sjuchwxt5l] {
+    background-color: #1E5945;
+    color: #E7EBDA;
+}
+
+.title[b-sjuchwxt5l] {
+    float: left;
+}
+
+.data_location[b-sjuchwxt5l] {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.size[b-sjuchwxt5l] {
+    float: right;
+    margin-right: 40px;
+}
+
+.jstatus[b-sjuchwxt5l] {
+    float: right;
+    cursor: pointer;
+}
+.jstatus_mine[b-sjuchwxt5l] {
+    float: right;
+}
